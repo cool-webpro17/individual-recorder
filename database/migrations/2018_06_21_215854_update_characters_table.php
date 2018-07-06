@@ -15,6 +15,7 @@ class UpdateCharactersTable extends Migration
     {
         Schema::table('characters', function (Blueprint $table) {
             $table->string('method_as')->nullable();
+            $table->integer('user_id')->nullable();
             //
         });
     }
