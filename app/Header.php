@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Header extends Model
 {
     //
-    protected $fillable = ['header'];
+    protected $fillable = ['header', 'user_id'];
 
 }

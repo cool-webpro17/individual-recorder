@@ -25,15 +25,15 @@ Route::group([
         'prefix' => '/character',
         'as' => 'character.'
     ], function () {
-        Route::get('all',                       ['as' => 'all',                         'uses' => 'HomeController@all']);
-        Route::get('name',                      ['as' => 'name',                        'uses' => 'HomeController@getName']);
+        Route::get('all/{userId}',              ['as' => 'all',                         'uses' => 'HomeController@all']);
+        Route::get('name/{userId}',             ['as' => 'name',                        'uses' => 'HomeController@getName']);
         Route::get('history/{characterId}',     ['as' => 'history',                     'uses' => 'HomeController@history']);
         Route::get('usage/{characterId}',       ['as' => 'usage',                       'uses' => 'HomeController@usage']);
         Route::get('/{id}',                     ['as' => 'get-character',               'uses' => 'HomeController@getCharacter']);
         Route::post('create',                   ['as' => 'create',                      'uses' => 'HomeController@store']);
-        Route::post('add-header',               ['as' => 'add-header',                  'uses' => 'HomeController@addHeader']);
+        Route::post('add-header/{userId}',      ['as' => 'add-header',                  'uses' => 'HomeController@addHeader']);
         Route::post('update',                   ['as' => 'update',                      'uses' => 'HomeController@update']);
-        Route::post('delete',                   ['as' => 'delete',                      'uses' => 'HomeController@delete']);
+        Route::post('delete/{userId}',          ['as' => 'delete',                      'uses' => 'HomeController@delete']);
 
     });
 });

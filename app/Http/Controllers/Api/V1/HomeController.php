@@ -15,9 +15,9 @@ use Auth;
 
 class HomeController extends Controller
 {
-    public function getValuesByCharacter()
+    public function getValuesByCharacter($userId)
     {
-        $all = Character::all();
+        $all = Character::where('user_id', '=', $userId)->get();
         $characters = [];
         foreach ($all as $each) {
             $tpValues = Value::where('character_id', '=', $each->id)->orderBy('header_id', 'dec')->get();
@@ -46,6 +46,7 @@ class HomeController extends Controller
             $character->measure_semantic = $request->input('measure_semantic');
             $character->entity_semantic = $request->input('entity_semantic');
             $character->creator = $request->input('creator');
+            $character->user_id = $request->input('user_id');
             $character->save();
 
         } else {
@@ -58,9 +59,10 @@ class HomeController extends Controller
                 'measure_semantic' => $request->input('measure_semantic'),
                 'entity_semantic' => $request->input('entity_semantic'),
                 'creator' => $request->input('creator'),
+                'user_id' => $request->input('user_id')
             ]);
 //            $headers = Header::orderBy('created_at', 'dec')->get();
-            $headers = Header::all();
+            $headers = Header::where('user_id', '=', $request->input('user_id'))->orWhere('user_id', '=', null)->get();
             foreach ($headers as $header) {
                 Value::create([
                     'character_id' => $character->id,
@@ -75,8 +77,8 @@ class HomeController extends Controller
         $value->value = $character->name;
         $value->save();
 
-        $characters = $this->getValuesByCharacter();
-        $arrayCharacters = Character::all();
+        $characters = $this->getValuesByCharacter($request->input('user_id'));
+        $arrayCharacters = Character::where('user_id', '=', $request->input('user_id'))->get();
         $data = [
             'character'  => $character,
             'value'       => $value,
@@ -97,9 +99,9 @@ class HomeController extends Controller
         return $history;
     }
 
-    public function getName(Request $request)
+    public function getName(Request $request, $userId)
     {
-        $characterName = Character::select('name')->get();
+        $characterName = Character::select('name')->where('user_id', '=', $userId)->get();
 
         return $characterName;
     }
@@ -132,12 +134,12 @@ class HomeController extends Controller
         return $actionLog;
     }
 
-    public function all(Request $request)
+    public function all(Request $request, $userId)
     {
-        $headers = Header::orderBy('created_at', 'dec')->get();
+        $headers = Header::where('user_id', '=', $userId)->orWhere('user_id', '=', null)->orderBy('created_at', 'dec')->get();
 //        $headers = Header::all();
-        $characters = $this->getValuesByCharacter();
-        $arrayCharacters = Character::all();
+        $characters = $this->getValuesByCharacter($userId);
+        $arrayCharacters = Character::where("user_id", '=', $userId)->get();
 
         $data = [
             'headers'               => $headers,
@@ -148,9 +150,12 @@ class HomeController extends Controller
         return $data;
     }
 
-    public function addHeader(Request $request) {
-        $header = Header::create($request->all());
-        $characters = Character::all();
+    public function addHeader(Request $request, $userId) {
+        $header = Header::create([
+                'header' => $request->input('header'),
+                'user_id' => $userId
+        ]);
+        $characters = Character::where('user_id', '=', $userId)->get();
         foreach ($characters as $character) {
             Value::create([
                 'character_id' => $character->id,
@@ -159,10 +164,10 @@ class HomeController extends Controller
             ]);
         }
 
-        $headers = Header::orderBy('created_at', 'dec')->get();
+        $headers = Header::where('user_id', '=', $userId)->orWhere('user_id', '=', null)->orderBy('created_at', 'dec')->get();
 //        $headers = Header::all();
-        $characters = $this->getValuesByCharacter();
-        $arrayCharacters = Character::all();
+        $characters = $this->getValuesByCharacter($userId);
+        $arrayCharacters = Character::where('user_id', $userId)->get();
 
         $data = [
             'headers'       => $headers,
@@ -181,13 +186,15 @@ class HomeController extends Controller
         return $value;
     }
 
-    public function delete(Request $request) {
+    public function delete(Request $request, $userId) {
         $character_id = $request->input('character_id');
         Character::where('id', '=', $character_id)->delete();
         Value::where('character_id', '=', $character_id)->delete();
-        $characters = $this->getValuesByCharacter();
+        $characters = $this->getValuesByCharacter($userId);
+        $arrayCharacters = Character::where('user_id', $userId)->get();
         $data = [
-            'characters'    => $characters
+            'characters'    => $characters,
+            'arrayCharacters' => $arrayCharacters
         ];
 
         return $data;

@@ -162,7 +162,8 @@
                     semantics: null,
                     creator: this.user.name,
                     usage: [],
-                    history: []
+                    history: [],
+                    user_id: this.user.id
                 },
                 actionLog: {
                     user_id: this.user.id
@@ -354,7 +355,7 @@
                 if (checkFields) {
                     this.detailsFlag = false;
                     this.updatedFlag = false;
-                    axios.get('/mr/individual/public/api/v1/character/name')
+                    axios.get('/mr/individual/public/api/v1/character/name/' + this.user.id)
                         .then(function (resp) {
                             console.log('get name resp', resp);
                             var checkName = true;
@@ -589,7 +590,7 @@
             },
             saveHeader: function() {
                 var app = this;
-                axios.get('/mr/individual/public/api/v1/character/all')
+                axios.get('/mr/individual/public/api/v1/character/all/' + app.user.id)
                     .then(function(resp) {
                         var headerData = resp.data.headers;
                         var tpFlag = true;
@@ -600,7 +601,7 @@
                         }
 
                         if (tpFlag) {
-                            axios.post('/mr/individual/public/api/v1/character/add-header', app.newHeader)
+                            axios.post('/mr/individual/public/api/v1/character/add-header/' + app.user.id, app.newHeader)
                                 .then(function (resp) {
                                     console.log("createHeader resp", resp);
 //                        $('.measure-table thead tr th:last-child').before("<th><input class='th-input' value='" + resp.data.header + "' /></th>");
@@ -791,10 +792,14 @@
                 var tpData = {
                     character_id: character_id
                 };
-                axios.post('/mr/individual/public/api/v1/character/delete', tpData)
+                axios.post('/mr/individual/public/api/v1/character/delete/' + app.user.id, tpData)
                     .then(function (resp) {
                         console.log("resp", resp);
                         app.characters = resp.data.characters;
+                        for (var i = 0; i < app.characters.length; i++) {
+                            app.characters[i][app.characters[i].length - 1].unit = resp.data.arrayCharacters[i].unit;
+                        }
+
                         app.actionLog.action_type = "delete";
                         app.actionLog.model_id = tpData.character_id;
                         app.actionLog.model_name = "character";
@@ -815,7 +820,7 @@
         },
         created() {
             var app = this;
-            axios.get('/mr/individual/public/api/v1/character/all')
+            axios.get('/mr/individual/public/api/v1/character/all/' + app.user.id)
                 .then(function (resp) {
                     console.log(resp);
                     app.headers = resp.data.headers;
