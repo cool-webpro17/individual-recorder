@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div v-if="measureArray.length == 0">
-                <input class="child-model" style="width: 100%;" v-model="measureSemantic" v-on:change="handleDataFc(0)"/>
+                <input class="child-model" :placeholder="placeholder[0]" style="width: 100%;" v-model="measureSemantic" v-on:change="handleDataFc(0)"/>
             </div>
         </div>
         <div class="col-md-12">
@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div v-if="entityArray.length == 0">
-                <input class="child-model" style="width: 100%;" v-model="entitySemantic" v-on:change="handleDataFc(1)"/>
+                <input class="child-model" :placeholder="placeholder[1]" style="width: 100%;" v-model="entitySemantic" v-on:change="handleDataFc(1)"/>
             </div>
 
         </div>
@@ -104,7 +104,8 @@
                 measureDetails: null,
                 entityDetails: null,
                 character_name: null,
-                objectProperty: null
+                objectProperty: null,
+                placeholder : []
             }
         },
         props: {
@@ -156,7 +157,8 @@
             this.measureSemantic = this.childData[0];
             this.entitySemantic = this.childData[1];
 
-
+            this.placeholder[0] = "Enter definition for " + this.character_name[0] + " here";
+            this.placeholder[1] = "Enter definition for " + this.character_name[1] + " here";
 
             axios.get('http://shark.sbs.arizona.edu:8080/PO/search?term=' + app.character_name[1])
                 .then(function (resp) {

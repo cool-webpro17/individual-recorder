@@ -170,8 +170,24 @@ class HomeController extends Controller
         $arrayCharacters = Character::where('user_id', $userId)->get();
 
         $data = [
-            'headers'       => $headers,
-            'characters'    => $characters,
+            'headers'               => $headers,
+            'characters'            => $characters,
+            'arrayCharacters'       => $arrayCharacters
+        ];
+
+        return $data;
+    }
+
+    public function deleteHeader(Request $request, $userId, $headerId) {
+        Header::where('id', '=', $headerId)->delete();
+        Value::where('header_id', '=', $headerId)->delete();
+        $characters = $this->getValuesByCharacter($userId);
+        $arrayCharacters = Character::where('user_id', $userId)->get();
+        $headers = Header::where('user_id', '=', $userId)->orWhere('user_id', '=', null)->orderBy('created_at', 'dec')->get();
+
+        $data = [
+            'headers'               => $headers,
+            'characters'            => $characters,
             'arrayCharacters'       => $arrayCharacters
         ];
 

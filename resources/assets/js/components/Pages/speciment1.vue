@@ -2,7 +2,7 @@
     <layout>
         <div slot="section" class="">
             <div class="tab-pane" id="">
-                <form class="row">
+                <form class="row" autocomplete="off">
                     <div class="col-md-4">
                         New Character
                     </div>
@@ -27,7 +27,10 @@
                                     <th style="min-width: 190px;"><input class="th-input" value="Character" /></th>
                                     <th style="min-width: 150px;"><input class="th-input" value="Average" /></th>
                                     <th style="min-width: 150px;"><input class="th-input" value="Deviation" /></th>
-                                    <th v-if="header.id > 3" v-for="header in headers" style="min-width: 150px;"><input class="th-input" v-bind:value="header.header" /></th>
+                                    <th v-if="header.id > 3" v-for="header in headers" style="min-width: 200px;">
+                                        <input class="th-input" v-bind:value="header.header" />
+                                        <a class="btn btn-add display-block" v-on:click="deleteHeader(header.id)"><span class="glyphicon glyphicon-remove"></span></a>
+                                    </th>
                                     <!--<th v-for="header in headers" style="min-width: 150px;"><input class="th-input" v-bind:value="header.header" /></th>-->
                                     <th class="actions" style="min-width: 150px;">
                                         <input class="th-input display-none" v-model="newHeader.header" name="header" autofocus/>
@@ -588,6 +591,95 @@
                 $('th.actions > .display-none').removeClass('display-none').addClass('display-block');
                 $('th.actions > .btn-add.display-block').removeClass('display-block').addClass('display-none');
             },
+            deleteHeader: function (headerId) {
+                var app = this;
+                console.log("headerId", headerId);
+                axios.post('/mr/individual/public/api/v1/character/delete-header/' + app.user.id + '/' + headerId)
+                    .then(function(resp) {
+                        console.log('deleteHeader resp', resp);
+                        app.headers = resp.data.headers;
+                        app.characters = resp.data.characters;
+                        for (var i = 0; i < app.characters.length; i++) {
+                            app.characters[i][app.characters[i].length - 1].unit = resp.data.arrayCharacters[i].unit;
+                        }
+                        app.actionLog.action_type = "delete_header";
+                        app.actionLog.model_id = resp.data.characters[0][resp.data.characters[0].length - 1].header_id;
+                        app.actionLog.model_name = "header";
+                        axios.post('/mr/individual/public/api/v1/log', app.actionLog)
+                            .then(function (resp) {
+                                console.log("successful log header !!!");
+                            })
+                            .catch(function (resp) {
+                                console.log(resp);
+                                alert("Error Occured !");
+                            });
+                        var totalSum = [];
+                        var headerCount = [];
+                        var averageValue = [];
+
+                        var deviationSum = [];
+                        var deviationValue = [];
+
+                        for (var i = 0; i < app.characters.length; i++) {
+                            totalSum[i] = 0;
+                            headerCount[i] = 0;
+                            averageValue[i] = 0;
+                            deviationSum[i] = 0;
+                            deviationValue[i] = 0;
+                            for (var j = 0; j < app.characters[i].length - 3; j++){
+                                if (app.characters[i][j].header_id > 3) {
+                                    if (isNaN(parseFloat(app.characters[i][j].value)) == false) {
+                                        headerCount[i]++;
+                                        totalSum[i] = totalSum[i] + parseFloat(app.characters[i][j].value);
+                                    }
+                                }
+                            }
+
+                            if (headerCount[i] > 0) {
+                                averageValue[i] = (totalSum[i] / headerCount[i]).toFixed(2);
+                                app.characters[i][app.characters[i].length - 2].value = (totalSum[i] / headerCount[i]).toFixed(2);
+                                axios.post('/mr/individual/public/api/v1/character/update', app.characters[i][app.characters[i].length - 2])
+                                    .then(function (resp) {
+                                        console.log('update average', resp);
+                                    })
+                                    .catch(function (resp) {
+                                        console.log(resp);
+                                        alert("Error Occured !");
+                                    });
+
+                                console.log("headerCount ", headerCount[i]);
+                                if (headerCount[i] > 1) {
+                                    for (var j = 0; j < (app.characters[i].length - 3); j++) {
+                                        console.log('check for deviation', isNaN(parseFloat(app.characters[i][j].value)));
+                                        if (isNaN(parseFloat(app.characters[i][j].value)) == false) {
+                                            deviationSum[i] = deviationSum[i] + Math.pow((parseFloat(app.characters[i][j].value) - averageValue[i]), 2);
+                                        }
+                                    }
+                                    deviationValue[i] = Math.pow((deviationSum[i] / (headerCount[i] - 1)), 0.5).toFixed(2);
+                                } else if (headerCount[i] == 1) {
+                                    for (var j = 0; j < (app.characters[i].length - 3); j++) {
+                                        if (isNaN(parseFloat(app.characters[i][j].value)) == false) {
+                                            deviationValue[i] = parseFloat(app.characters[i][j].value).toFixed(2);
+                                        }
+                                    }
+                                }
+                                app.characters[i][app.characters[i].length - 3].value = deviationValue[i];
+                                axios.post('/mr/individual/public/api/v1/character/update', app.characters[i][app.characters[i].length - 3])
+                                    .then(function (resp) {
+                                        console.log('update deviation', resp);
+                                    })
+                                    .catch(function (resp) {
+                                        console.log(resp);
+                                        alert("Error Occured !");
+                                    });
+
+                            }
+                        }
+                    })
+                    .catch(function(resp) {
+                        console.log('error deleteHeader', resp);
+                    });
+            },
             saveHeader: function() {
                 var app = this;
                 axios.get('/mr/individual/public/api/v1/character/all/' + app.user.id)
@@ -615,9 +707,10 @@
                                     app.actionLog.action_type = "create_header";
                                     app.actionLog.model_id = resp.data.characters[0][resp.data.characters[0].length - 1].header_id;
                                     app.actionLog.model_name = "header";
+                                    app.newHeader.header = '';
                                     axios.post('/mr/individual/public/api/v1/log', app.actionLog)
                                         .then(function (resp) {
-                                            console.log("successful log character !!!");
+                                            console.log("successful log header !!!");
                                         })
                                         .catch(function (resp) {
                                             console.log(resp);
@@ -754,7 +847,7 @@
                             var deviationValue = 0;
 
                             if (headerCount > 1) {
-                                for (var i = 0; i < headerCount; i++) {
+                                for (var i = 0; i < (app.characters[characterIndex].length - 3); i++) {
                                     console.log("check value for deviation", app.characters[characterIndex][i].value);
                                     console.log("check of parse for deviation", isNaN(parseFloat(app.characters[characterIndex][i].value)));
                                     if (isNaN(parseFloat(app.characters[characterIndex][i].value)) == false) {
@@ -763,7 +856,7 @@
                                 }
                                 deviationValue = Math.pow((deviationSum / (headerCount - 1)), 0.5).toFixed(2);
                             } else if (headerCount == 1) {
-                                for (var i = 3; i < (app.characters[characterIndex].length); i++) {
+                                for (var i = 0; i < (app.characters[characterIndex].length - 3); i++) {
                                     if (isNaN(parseFloat(app.characters[characterIndex][i].value)) == false) {
                                         deviationValue = parseFloat(app.characters[characterIndex][i].value).toFixed(2);
                                     }
