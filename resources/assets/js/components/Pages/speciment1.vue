@@ -7,7 +7,8 @@
                         New Character
                     </div>
                     <div class="col-md-4">
-                        <input placeholder="Measure of Entity (e.g: length of leaf)" style="width: 100%;" v-model="character.name" name="text"/>
+                        <input placeholder="Measure of Entity (e.g: length of leaf)" style="width: 100%;"
+                               v-model="character.name" name="text"/>
                     </div>
                     <div class="col-md-4">
                         <a v-on:click="storeCharacter()" class="btn btn-primary"
@@ -24,19 +25,27 @@
                                     <!--<th style="min-width: 150px;"><input class="th-input" v-bind:value="headers[headers.length - 3].header" /></th>-->
                                     <!--<th style="min-width: 150px;"><input class="th-input" v-bind:value="headers[headers.length - 2].header" /></th>-->
                                     <!--<th style="min-width: 150px;"><input class="th-input" v-bind:value="headers[headers.length - 1].header" /></th>-->
-                                    <th style="min-width: 190px;"><input class="th-input" value="Character" /></th>
-                                    <th style="min-width: 150px;"><input class="th-input" value="Average" /></th>
-                                    <th style="min-width: 150px;"><input class="th-input" value="Deviation" /></th>
+                                    <th class="actions" style="min-width: 250px;">
+                                        <input class="th-input" value="Character"/>
+                                        <a class="btn btn-add display-block" v-on:click="addHeader()"><span
+                                                class="glyphicon glyphicon-plus"></span></a>
+                                    </th>
+                                    <th style="min-width: 150px;"><input class="th-input" value="Average"/></th>
+                                    <th style="min-width: 150px;"><input class="th-input" value="Deviation"/></th>
                                     <th v-if="header.id > 3" v-for="header in headers" style="min-width: 200px;">
-                                        <input class="th-input" v-bind:value="header.header" />
-                                        <a class="btn btn-add display-block" v-on:click="deleteHeader(header.id)"><span class="glyphicon glyphicon-remove"></span></a>
+                                        <input class="th-input" v-bind:value="header.header"/>
+                                        <a class="btn btn-add display-block" v-on:click="deleteHeader(header.id)"><span
+                                                class="glyphicon glyphicon-remove"></span></a>
                                     </th>
                                     <!--<th v-for="header in headers" style="min-width: 150px;"><input class="th-input" v-bind:value="header.header" /></th>-->
-                                    <th class="actions" style="min-width: 150px;">
-                                        <input class="th-input display-none" v-model="newHeader.header" name="header" autofocus/>
-                                        <a class="btn btn-add display-block" v-on:click="addHeader()" style="width: 100%; height:37px; "><span class="glyphicon glyphicon-plus"></span></a>
-                                        <a class="btn btn-success btn-save display-none" v-on:click="saveHeader()"><span class="glyphicon glyphicon-floppy-disk"></span></a>
-                                        <a class="btn btn-danger btn-cancel display-none" v-on:click="cancelHeader()"><span class="glyphicon glyphicon-remove-circle"></span></a>
+                                    <th class="actions display-none" style="min-width: 150px;">
+                                        <input style="width: 50%;" class="th-input" v-model="newHeader.header" name="header"
+                                               autofocus/>
+                                        <a class="btn btn-success btn-save" v-on:click="saveHeader()"><span
+                                                class="glyphicon glyphicon-floppy-disk"></span></a>
+                                        <a class="btn btn-danger btn-cancel"
+                                           v-on:click="cancelHeader()"><span
+                                                class="glyphicon glyphicon-remove-circle"></span></a>
                                     </th>
                                 </tr>
                                 </thead>
@@ -46,7 +55,10 @@
                                     <td class="text-center" v-if="item.header_id == 1" v-for="item in eachCharacter">
                                         <div>
                                             {{ item.value }} ({{ item.unit }})
-                                            <a class="btn" v-on:click="editCharacter(eachCharacter[eachCharacter.length - 1])"><span class="glyphicon glyphicon-edit"></span></a>
+                                            <a class="btn"
+                                               v-on:click="editCharacter(eachCharacter[eachCharacter.length - 1])"><span
+                                                    class="glyphicon glyphicon-edit"></span></a>
+                                            <a class="btn" v-on:click="deleteCharacter(eachCharacter[0].character_id)"><span class="glyphicon glyphicon-trash"></span></a>
                                         </div>
                                     </td>
                                     <td class="text-center" v-if="item.header_id == 2" v-for="item in eachCharacter">
@@ -57,17 +69,17 @@
                                     </td>
                                     <td v-if="item.header_id > 3" v-for="item in eachCharacter">
                                         <!--<div class="text-center" v-if="item.header_id == 1">-->
-                                            <!--{{ item.value }} ({{ item.unit }})-->
-                                            <!--<a class="btn" v-on:click="editCharacter(eachCharacter[0])"><span class="glyphicon glyphicon-edit"></span></a>-->
+                                        <!--{{ item.value }} ({{ item.unit }})-->
+                                        <!--<a class="btn" v-on:click="editCharacter(eachCharacter[0])"><span class="glyphicon glyphicon-edit"></span></a>-->
                                         <!--</div>-->
                                         <!--<div class="text-center" v-if="item.header_id > 1 && item.header_id < 4">-->
-                                            <!--{{ item.value }}-->
+                                        <!--{{ item.value }}-->
                                         <!--</div>-->
-                                        <input v-if="item.header_id >= 4" class="td-input" v-model="item.value" v-on:blur="saveItem(item)"/>
+                                        <input v-if="item.header_id >= 4" class="td-input" v-model="item.value"
+                                               v-on:blur="saveItem(item)"/>
                                     </td>
-                                    <td class="actions text-center">
-                                        <a class="btn" v-on:click="deleteCharacter(eachCharacter[0].character_id)"><span class="glyphicon glyphicon-trash"></span></a>
-                                    </td>
+                                    <!--<td class="actions text-center">-->
+                                    <!--</td>-->
                                 </tr>
                                 </tbody>
                             </table>
@@ -88,10 +100,14 @@
                                             <div class="row">
                                                 <div class="col-md-7 radial-menu">
                                                     <ul style="margin-left: auto; margin-right: auto;">
-                                                        <li class="method"><a v-on:click="showDetails('method')">Method</a></li>
-                                                        <li class="unit"><a v-on:click="showDetails('unit')">Unit</a></li>
-                                                        <li class="semantics"><a v-on:click="showDetails('semantics')">Semantics</a></li>
-                                                        <li class="creator"><a v-on:click="showDetails('creator')">Creator</a></li>
+                                                        <li class="method"><a
+                                                                v-on:click="showDetails('method')">Method</a></li>
+                                                        <li class="unit"><a v-on:click="showDetails('unit')">Unit</a>
+                                                        </li>
+                                                        <li class="semantics"><a v-on:click="showDetails('semantics')">Semantics</a>
+                                                        </li>
+                                                        <li class="creator"><a v-on:click="showDetails('creator')">Creator</a>
+                                                        </li>
                                                         <li><a v-on:click="showDetails('usage')">Usage</a></li>
                                                         <li><a v-on:click="showDetails('history')">History</a></li>
                                                         <li><a v-on:click="showDetails('')">Future<br>Function</a></li>
@@ -113,7 +129,8 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-12 text-right" style="margin-top: 15px;">
-                                                    <a :disabled="saveDisabled == true" v-on:click="saveCharacter()" class="btn btn-primary">Save</a>
+                                                    <a :disabled="saveDisabled == true" v-on:click="saveCharacter()"
+                                                       class="btn btn-primary">Save</a>
                                                     <a v-on:click="cancelCharacter()" class="btn btn-danger">Cancel</a>
                                                 </div>
                                             </div>
@@ -387,174 +404,152 @@
 
                                         if (app.editFlag) {
                                             if (app.methodUpdateFlag) {
-                                                var jsonRequest = {
-
-                                                };
+                                                var jsonRequest = {};
                                                 jsonRequest.character_id = app.character.id;
                                                 jsonRequest.username = app.user.name;
                                                 jsonRequest.description = 'updated method';
                                                 axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                    .then(function(resp) {
+                                                    .then(function (resp) {
                                                         console.log("update metalog", resp);
                                                         if (app.unitUpdateFlag) {
-                                                            var jsonRequest = {
-
-                                                            };
+                                                            var jsonRequest = {};
                                                             jsonRequest.character_id = app.character.id;
                                                             jsonRequest.username = app.user.name;
                                                             jsonRequest.description = 'updated unit';
                                                             axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                                .then(function(resp) {
+                                                                .then(function (resp) {
                                                                     console.log("update metalog", resp);
                                                                     if (app.semanticsUpdateFlag) {
-                                                                        var jsonRequest = {
-
-                                                                        };
+                                                                        var jsonRequest = {};
                                                                         jsonRequest.character_id = app.character.id;
                                                                         jsonRequest.username = app.user.name;
                                                                         jsonRequest.description = 'updated semantics';
                                                                         axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                                            .then(function(resp) {
+                                                                            .then(function (resp) {
                                                                                 console.log("update metalog", resp);
                                                                                 if (app.creatorUpdateFlag) {
-                                                                                    var jsonRequest = {
-
-                                                                                    };
+                                                                                    var jsonRequest = {};
                                                                                     jsonRequest.character_id = app.character.id;
                                                                                     jsonRequest.username = app.user.name;
                                                                                     jsonRequest.description = 'updated creator';
                                                                                     axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                                                        .then(function(resp) {
+                                                                                        .then(function (resp) {
                                                                                             console.log("update metalog", resp);
                                                                                         })
-                                                                                        .catch(function(resp) {
+                                                                                        .catch(function (resp) {
                                                                                             console.log('error', resp);
                                                                                             alert('Error Occurred while meta logging.')
                                                                                         });
                                                                                 }
                                                                             })
-                                                                            .catch(function(resp) {
+                                                                            .catch(function (resp) {
                                                                                 console.log('error', resp);
                                                                                 alert('Error Occurred while meta logging.')
                                                                             });
                                                                     }
                                                                 })
-                                                                .catch(function(resp) {
+                                                                .catch(function (resp) {
                                                                     console.log('error', resp);
                                                                     alert('Error Occurred while meta logging.')
                                                                 });
                                                         }
                                                     })
-                                                    .catch(function(resp) {
+                                                    .catch(function (resp) {
                                                         console.log('error', resp);
                                                         alert('Error Occurred while meta logging.')
                                                     });
                                             } else if (app.unitUpdateFlag) {
-                                                var jsonRequest = {
-
-                                                };
+                                                var jsonRequest = {};
                                                 jsonRequest.character_id = app.character.id;
                                                 jsonRequest.username = app.user.name;
                                                 jsonRequest.description = 'updated unit';
                                                 axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                    .then(function(resp) {
+                                                    .then(function (resp) {
                                                         console.log("update metalog", resp);
                                                         if (app.semanticsUpdateFlag) {
-                                                            var jsonRequest = {
-
-                                                            };
+                                                            var jsonRequest = {};
                                                             jsonRequest.character_id = app.character.id;
                                                             jsonRequest.username = app.user.name;
                                                             jsonRequest.description = 'updated semantics';
                                                             axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                                .then(function(resp) {
+                                                                .then(function (resp) {
                                                                     console.log("update metalog", resp);
                                                                     if (app.creatorUpdateFlag) {
-                                                                        var jsonRequest = {
-
-                                                                        };
+                                                                        var jsonRequest = {};
                                                                         jsonRequest.character_id = app.character.id;
                                                                         jsonRequest.username = app.user.name;
                                                                         jsonRequest.description = 'updated creator';
                                                                         axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                                            .then(function(resp) {
+                                                                            .then(function (resp) {
                                                                                 console.log("update metalog", resp);
                                                                             })
-                                                                            .catch(function(resp) {
+                                                                            .catch(function (resp) {
                                                                                 console.log('error', resp);
                                                                                 alert('Error Occurred while meta logging.')
                                                                             });
                                                                     }
                                                                 })
-                                                                .catch(function(resp) {
+                                                                .catch(function (resp) {
                                                                     console.log('error', resp);
                                                                     alert('Error Occurred while meta logging.')
                                                                 });
                                                         }
                                                     })
-                                                    .catch(function(resp) {
+                                                    .catch(function (resp) {
                                                         console.log('error', resp);
                                                         alert('Error Occurred while meta logging.')
                                                     });
                                             } else if (app.semanticsUpdateFlag) {
-                                                var jsonRequest = {
-
-                                                };
+                                                var jsonRequest = {};
                                                 jsonRequest.character_id = app.character.id;
                                                 jsonRequest.username = app.user.name;
                                                 jsonRequest.description = 'updated semantics';
                                                 axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                    .then(function(resp) {
+                                                    .then(function (resp) {
                                                         console.log("update metalog", resp);
                                                         if (app.creatorUpdateFlag) {
-                                                            var jsonRequest = {
-
-                                                            };
+                                                            var jsonRequest = {};
                                                             jsonRequest.character_id = app.character.id;
                                                             jsonRequest.username = app.user.name;
                                                             jsonRequest.description = 'updated creator';
                                                             axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                                .then(function(resp) {
+                                                                .then(function (resp) {
                                                                     console.log("update metalog", resp);
                                                                 })
-                                                                .catch(function(resp) {
+                                                                .catch(function (resp) {
                                                                     console.log('error', resp);
                                                                     alert('Error Occurred while meta logging.')
                                                                 });
                                                         }
                                                     })
-                                                    .catch(function(resp) {
+                                                    .catch(function (resp) {
                                                         console.log('error', resp);
                                                         alert('Error Occurred while meta logging.')
                                                     });
                                             } else if (app.creatorUpdateFlag) {
-                                                var jsonRequest = {
-
-                                                };
+                                                var jsonRequest = {};
                                                 jsonRequest.character_id = app.character.id;
                                                 jsonRequest.username = app.user.name;
                                                 jsonRequest.description = 'updated creator';
                                                 axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                    .then(function(resp) {
+                                                    .then(function (resp) {
                                                         console.log("update metalog", resp);
                                                     })
-                                                    .catch(function(resp) {
+                                                    .catch(function (resp) {
                                                         console.log('error', resp);
                                                         alert('Error Occurred while meta logging.')
                                                     });
                                             }
                                         } else {
-                                            var jsonRequest = {
-
-                                            };
+                                            var jsonRequest = {};
                                             jsonRequest.character_id = app.character.id;
                                             jsonRequest.username = app.user.name;
                                             jsonRequest.description = 'created';
                                             axios.post('/mr/individual/public/api/v1/meta-log', jsonRequest)
-                                                .then(function(resp) {
+                                                .then(function (resp) {
                                                     console.log("create metalog", resp);
                                                 })
-                                                .catch(function(resp) {
+                                                .catch(function (resp) {
                                                     console.log('error', resp);
                                                     alert('Error Occurred while meta logging.')
                                                 });
@@ -586,16 +581,16 @@
                 this.parentData = null;
                 this.character.name = '';
             },
-            addHeader: function() {
+            addHeader: function () {
 //                $('.measure-table > thead > tr > th:last-child').before('<th></th>')
-                $('th.actions > .display-none').removeClass('display-none').addClass('display-block');
+                $('th.actions.display-none').removeClass('display-none').addClass('display-block');
                 $('th.actions > .btn-add.display-block').removeClass('display-block').addClass('display-none');
             },
             deleteHeader: function (headerId) {
                 var app = this;
                 console.log("headerId", headerId);
                 axios.post('/mr/individual/public/api/v1/character/delete-header/' + app.user.id + '/' + headerId)
-                    .then(function(resp) {
+                    .then(function (resp) {
                         console.log('deleteHeader resp', resp);
                         app.headers = resp.data.headers;
                         app.characters = resp.data.characters;
@@ -626,7 +621,7 @@
                             averageValue[i] = 0;
                             deviationSum[i] = 0;
                             deviationValue[i] = 0;
-                            for (var j = 0; j < app.characters[i].length - 3; j++){
+                            for (var j = 0; j < app.characters[i].length - 3; j++) {
                                 if (app.characters[i][j].header_id > 3) {
                                     if (isNaN(parseFloat(app.characters[i][j].value)) == false) {
                                         headerCount[i]++;
@@ -676,17 +671,17 @@
                             }
                         }
                     })
-                    .catch(function(resp) {
+                    .catch(function (resp) {
                         console.log('error deleteHeader', resp);
                     });
             },
-            saveHeader: function() {
+            saveHeader: function () {
                 var app = this;
                 axios.get('/mr/individual/public/api/v1/character/all/' + app.user.id)
-                    .then(function(resp) {
+                    .then(function (resp) {
                         var headerData = resp.data.headers;
                         var tpFlag = true;
-                        for (var i = 0; i < headerData.length; i ++) {
+                        for (var i = 0; i < headerData.length; i++) {
                             if (app.newHeader.header == headerData[i].header) {
                                 tpFlag = false;
                             }
@@ -702,7 +697,7 @@
                                     for (var i = 0; i < app.characters.length; i++) {
                                         app.characters[i][app.characters[i].length - 1].unit = resp.data.arrayCharacters[i].unit;
                                     }
-                                    $('th.actions > .display-block').removeClass('display-block').addClass('display-none');
+                                    $('th.actions.display-block').removeClass('display-block').addClass('display-none');
                                     $('th.actions > .btn-add.display-none').removeClass('display-none').addClass('display-block');
                                     app.actionLog.action_type = "create_header";
                                     app.actionLog.model_id = resp.data.characters[0][resp.data.characters[0].length - 1].header_id;
@@ -724,17 +719,16 @@
                             alert("The header is already exist. Please check the header name.");
                         }
                     })
-                    .catch(function(resp) {
+                    .catch(function (resp) {
                         console.log("resp", resp);
                     });
 
             },
-            cancelHeader: function() {
-                $('th.actions > .display-block').removeClass('display-block').addClass('display-none');
+            cancelHeader: function () {
+                $('th.actions.display-block').removeClass('display-block').addClass('display-none');
                 $('th.actions > .btn-add.display-none').removeClass('display-none').addClass('display-block');
             },
-            swapComponent: function(component)
-            {
+            swapComponent: function (component) {
                 this.currentComponent = component;
             },
             storeCharacter() {
@@ -777,10 +771,10 @@
                 }
 
             },
-            detailComponent: function(componentId) {
+            detailComponent: function (componentId) {
                 console.log("componentId", componentId);
             },
-            saveItem: function(item) {
+            saveItem: function (item) {
                 var app = this;
                 if (item.value < 0) {
                     alert("Value should be only positive value.");
@@ -809,7 +803,7 @@
                             var averageValue = 0;
 
                             for (var i = 0; i < app.characters.length; i++) {
-                                for (var j = 0; j < app.characters[i].length; j++){
+                                for (var j = 0; j < app.characters[i].length; j++) {
                                     if (app.characters[i][j].character_id == updatedCharacter.character_id) {
                                         characterIndex = i;
                                         if (app.characters[i][j].header_id == updatedCharacter.header_id) {
@@ -880,7 +874,7 @@
                         });
                 }
             },
-            deleteCharacter: function(character_id) {
+            deleteCharacter: function (character_id) {
                 var app = this;
                 var tpData = {
                     character_id: character_id
