@@ -15,7 +15,7 @@ class UpdateHeadersTable extends Migration
     {
         Schema::table('headers', function (Blueprint $table) {
             //
-            $table->integer('user_id');
+            $table->integer('user_id')->nullable();
         });
     }
 

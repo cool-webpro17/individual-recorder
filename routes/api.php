@@ -21,6 +21,9 @@ Route::group([
 
     Route::post('meta-log',                             ['as' => 'meta_log',                    'uses' => 'HomeController@saveMetaLog']);
     Route::get('meta-log/{characterId}',                ['as' => 'meta_log',                'uses' => 'HomeController@getMetaLog']);
+
+    Route::post('user-log',                             ['as' => 'user_log',                    'uses' => 'HomeController@saveUserLog']);
+
     Route::group([
         'prefix' => '/character',
         'as' => 'character.'
